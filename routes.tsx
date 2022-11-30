@@ -1,14 +1,14 @@
-import React from 'react'
+import React from "react";
 
-import {Routes, Route} from 'react-router-dom';
-import Home from './src/pages/Home'
+import { Routes, Route } from "react-router-dom";
+import Home from "./src/pages/Home";
 
-function AppRoutes(){
-    return(
+function AppRoutes() {
+    return (
         <Routes>
-            <Route path="/" element={<Home/>}/>
+            <Route path="/TrabalhoFinal-BD" element={<Home />} />
         </Routes>
-    )
+    );
 }
 
-export default AppRoutes
+export default AppRoutes;
