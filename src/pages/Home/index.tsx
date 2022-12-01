@@ -9,6 +9,7 @@ import {
     MenuItem,
     FormControl,
     SelectChangeEvent,
+    Menu,
 } from "@mui/material";
 import RegistratioForm from "../../components/RegistrationForm";
 import { useState } from "react";
@@ -19,6 +20,8 @@ function Home() {
     const handleChange = (event: SelectChangeEvent) => {
         setSelect(event.target.value);
     };
+
+    console.log(select);
 
     return (
         <>
@@ -40,6 +43,14 @@ function Home() {
                         <MenuItem value="role">Cargo</MenuItem>
                         <MenuItem value="product">Produto</MenuItem>
                         <MenuItem value="maker">Fabricante</MenuItem>
+                        <MenuItem value="branch">Filial</MenuItem>
+                        <MenuItem value="note">Nota</MenuItem>
+                        <MenuItem value="product-category">
+                            Categoria do produto
+                        </MenuItem>
+                        <MenuItem value="payment-method">
+                            Método de pagamento
+                        </MenuItem>
                     </Select>
 
                     <RegistratioForm selected={select} />
