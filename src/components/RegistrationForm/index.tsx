@@ -70,13 +70,6 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
     useEffect(() => {
         getBranch();
         getRole();
-
-        const interval = setInterval(() => {
-            getBranch();
-            getRole();
-        }, 10000);
-
-        return () => clearInterval(interval);
     }, []);
 
     const handleFormChange = (
@@ -238,6 +231,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                     onChange={(event) =>
                         handleFormChange(event, employeeData, setEmployeeData)
                     }
+                    onClick={getBranch}
                 >
                     {branch.map((item: any) => (
                         <MenuItem value={item[0]} key={item[0]}>
@@ -255,6 +249,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                     onChange={(event) =>
                         handleFormChange(event, employeeData, setEmployeeData)
                     }
+                    onClick={getRole}
                 >
                     {role.map((item: any) => (
                         <MenuItem value={item[0]} key={item[0]}>
