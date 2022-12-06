@@ -1,6 +1,4 @@
-interface RegistrationFormProps {
-    selected: string;
-}
+import { useEffect, useState } from "react";
 
 import {
     TextField,
@@ -10,34 +8,99 @@ import {
     MenuItem,
     InputLabel,
 } from "@mui/material";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers/";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useState } from "react";
-import { ChangeEvent } from "react";
 
 import styles from "./styles.module.scss";
+import { api } from "../../services/api";
+interface RegistrationFormProps {
+    selected: string;
+}
+
+type Client = {
+    name: string;
+    email: string;
+    cpf: string;
+    phone: string;
+};
+
+const initialValueClient = {
+    name: "",
+    email: "",
+    cpf: "",
+    phone: "",
+};
 
 function RegistratioForm({ selected }: RegistrationFormProps) {
-    //TODO
-    // const [basicForm, setBasicForm] = useState({
-    //     name: "",
-    //     cpf: "",
-    // });
+    const [clientData, setClientData] = useState(initialValueClient);
+    console.log(clientData);
 
-    // const handleBasicForm = (event: ChangeEvent<HTMLInputElement>) => {
-    //     setBasicForm({
-    //         ...basicForm,
-    //         [event.target.name]: event.target.value,
-    //     });
-    // };
+    const handleClientChange = (event: React.ChangeEvent) => {
+        const { name, value } = event.target as HTMLInputElement;
+        setClientData({ ...clientData, [name]: value });
+    };
 
-    const ClientForm = () => (
-        <FormControl className={styles.form}>
-            <TextField label="Nome" required />
-            <TextField label="CPF" required />
-            <TextField label="Email" required />
-            <TextField label="Telefone" required />
-        </FormControl>
+    function postClient(
+        table: string,
+        name: string,
+        email: string,
+        cpf: string,
+        phone: string
+    ) {
+        api.post("/insert", {
+            table: table,
+            name: name,
+            email: email,
+            cpf: cpf,
+            phone: phone,
+        })
+            .then((response) => console.log("Post enviado com sucesso!"))
+            .catch((error) => console.log(error));
+    }
+
+    const clientForm = () => (
+        <div className={styles.form}>
+            <TextField
+                label="Nome"
+                name="name"
+                value={clientData.name}
+                onChange={handleClientChange}
+                required
+            />
+
+            <TextField
+                label="CPF"
+                name="cpf"
+                value={clientData.cpf}
+                onChange={handleClientChange}
+                required
+            />
+            <TextField
+                value={clientData.email}
+                onChange={handleClientChange}
+                label="Email"
+                name="email"
+                required
+            />
+            <TextField
+                label="Telefone"
+                name="phone"
+                value={clientData.phone}
+                onChange={handleClientChange}
+                required
+            />
+            <Button
+                onClick={() =>
+                    postClient(
+                        "cliente",
+                        clientData.name,
+                        clientData.email,
+                        clientData.cpf,
+                        clientData.phone
+                    )
+                }
+            >
+                Cliente Button
+            </Button>
+        </div>
     );
 
     const EmployeeForm = () => (
@@ -120,10 +183,10 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
         </FormControl>
     );
 
-    const SelectedForm = () => {
+    const selectedForm = () => {
         switch (selected) {
             case "client":
-                return <ClientForm />;
+                return clientForm();
             case "employee":
                 return <EmployeeForm />;
             case "role":
@@ -145,7 +208,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
         }
     };
 
-    return <SelectedForm />;
+    return selectedForm();
 }
 
 export default RegistratioForm;

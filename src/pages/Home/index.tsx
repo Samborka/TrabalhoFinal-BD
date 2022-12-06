@@ -2,7 +2,6 @@ import Navbar from "../../components/Navbar";
 import styles from "./styles.module.scss";
 
 import {
-    TextField,
     Button,
     Select,
     InputLabel,
@@ -20,8 +19,6 @@ function Home() {
     const handleChange = (event: SelectChangeEvent) => {
         setSelect(event.target.value);
     };
-
-    console.log(select);
 
     return (
         <>
@@ -52,11 +49,11 @@ function Home() {
                             Método de pagamento
                         </MenuItem>
                     </Select>
-
-                    <RegistratioForm selected={select} />
-                    <br />
-                    <Button variant="contained">Enviar cadastro</Button>
                 </FormControl>
+
+                <RegistratioForm selected={select} />
+                <br />
+                <Button variant="contained">Enviar cadastro</Button>
             </main>
         </>
     );
