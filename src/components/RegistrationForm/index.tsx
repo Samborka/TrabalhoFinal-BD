@@ -37,16 +37,46 @@ const initialValueRole = {
     permission: "",
 };
 
+const initialValueEmployee = {
+    name: "",
+    cpf: "",
+    cod_filial: "",
+    cod_cargo: "",
+};
+
 function RegistratioForm({ selected }: RegistrationFormProps) {
     const [clientData, setClientData] = useState(initialValueClient);
     const [roleData, setRoleData] = useState(initialValueRole);
+    const [employeeData, setEmployeeData] = useState(initialValueEmployee);
+    const [branch, setBranch] = useState([]);
+    const [role, setRole] = useState([]);
 
-    useEffect(() => {
+    const getBranch = () => {
         api.get("/select", {
             params: {
                 table: "filial",
             },
-        }).then((response) => console.log(response));
+        }).then((response) => setBranch(response.data.records));
+    };
+
+    const getRole = () => {
+        api.get("/select", {
+            params: {
+                table: "cargo",
+            },
+        }).then((response) => setRole(response.data.records));
+    };
+
+    useEffect(() => {
+        getBranch();
+        getRole();
+
+        const interval = setInterval(() => {
+            getBranch();
+            getRole();
+        }, 10000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const handleFormChange = (
@@ -92,6 +122,28 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 salario: salary,
                 descricao: description,
                 permissao_venda: permission,
+            },
+        })
+            .then((response) => {
+                alert(response.data.message);
+                setRoleData(initialValueRole);
+            })
+            .catch((error) => console.log(error));
+    }
+
+    function createEmployee(
+        name: string,
+        cpf: string,
+        cod_filial: string,
+        cod_cargo: string
+    ) {
+        api.post("/insert", null, {
+            params: {
+                table: "funcionario",
+                nome: name,
+                cpf: cpf,
+                cod_filial: cod_filial,
+                cod_cargo: cod_cargo,
             },
         })
             .then((response) => {
@@ -157,14 +209,74 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
         </div>
     );
 
-    const EmployeeForm = () => (
-        <FormControl className={styles.form}>
-            <TextField label="Nome" required />
-            <TextField label="CPF" required />
-            Implementar os códigos que serão chaves estrangeiras
-            <span>Chave estrangeira</span>
-            <span>Chave estrangeira</span>
-        </FormControl>
+    const employeeForm = () => (
+        <div className={styles.form}>
+            <TextField
+                label="Nome"
+                name="name"
+                value={employeeData.name}
+                onChange={(event) =>
+                    handleFormChange(event, employeeData, setEmployeeData)
+                }
+                required
+            />
+            <TextField
+                label="CPF"
+                name="cpf"
+                value={employeeData.cpf}
+                onChange={(event) =>
+                    handleFormChange(event, employeeData, setEmployeeData)
+                }
+                required
+            />
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 300 }}>
+                <InputLabel id="cod-filial-label">Filial</InputLabel>
+                <Select
+                    labelId="cod-filial-label"
+                    name="cod_filial"
+                    value={employeeData.cod_filial}
+                    onChange={(event) =>
+                        handleFormChange(event, employeeData, setEmployeeData)
+                    }
+                >
+                    {branch.map((item: any) => (
+                        <MenuItem value={item[0]} key={item[0]}>
+                            {item[1]}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 300 }}>
+                <InputLabel id="cod-role-label">Cargo</InputLabel>
+                <Select
+                    labelId="cod-role-label"
+                    name="cod_cargo"
+                    value={employeeData.cod_filial}
+                    onChange={(event) =>
+                        handleFormChange(event, employeeData, setEmployeeData)
+                    }
+                >
+                    {role.map((item: any) => (
+                        <MenuItem value={item[0]} key={item[0]}>
+                            {item[2]}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <Button
+                variant="contained"
+                onClick={() =>
+                    createEmployee(
+                        employeeData.name,
+                        employeeData.cpf,
+                        employeeData.cod_filial,
+                        employeeData.cod_cargo
+                    )
+                }
+            >
+                Registrar Funcionário
+            </Button>
+        </div>
     );
 
     const roleForm = () => (
@@ -202,20 +314,19 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                     <MenuItem value="true">Pode vender</MenuItem>
                     <MenuItem value="false">Não pode vender</MenuItem>
                 </Select>
-                <br />
-                <Button
-                    variant="contained"
-                    onClick={() =>
-                        createRole(
-                            roleData.salary,
-                            roleData.description,
-                            roleData.permission
-                        )
-                    }
-                >
-                    Registrar cargo
-                </Button>
             </FormControl>
+            <Button
+                variant="contained"
+                onClick={() =>
+                    createRole(
+                        roleData.salary,
+                        roleData.description,
+                        roleData.permission
+                    )
+                }
+            >
+                Registrar cargo
+            </Button>
         </div>
     );
 
@@ -280,7 +391,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
             case "client":
                 return clientForm();
             case "employee":
-                return <EmployeeForm />;
+                return employeeForm();
             case "role":
                 return roleForm();
             case "product":
