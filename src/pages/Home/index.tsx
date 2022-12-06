@@ -1,5 +1,6 @@
+import { useState } from "react";
 import Navbar from "../../components/Navbar";
-import styles from "./styles.module.scss";
+import RegistratioForm from "../../components/RegistrationForm";
 
 import {
     Button,
@@ -10,8 +11,8 @@ import {
     SelectChangeEvent,
     Menu,
 } from "@mui/material";
-import RegistratioForm from "../../components/RegistrationForm";
-import { useState } from "react";
+
+import styles from "./styles.module.scss";
 
 function Home() {
     const [select, setSelect] = useState("");
@@ -52,8 +53,6 @@ function Home() {
                 </FormControl>
 
                 <RegistratioForm selected={select} />
-                <br />
-                <Button variant="contained">Enviar cadastro</Button>
             </main>
         </>
     );

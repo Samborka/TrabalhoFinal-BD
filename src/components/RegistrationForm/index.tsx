@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     TextField,
@@ -7,10 +7,12 @@ import {
     Select,
     MenuItem,
     InputLabel,
+    SelectChangeEvent,
 } from "@mui/material";
 
-import styles from "./styles.module.scss";
 import { api } from "../../services/api";
+
+import styles from "./styles.module.scss";
 interface RegistrationFormProps {
     selected: string;
 }
@@ -29,30 +31,73 @@ const initialValueClient = {
     phone: "",
 };
 
+const initialValueRole = {
+    salary: "",
+    description: "",
+    permission: "",
+};
+
 function RegistratioForm({ selected }: RegistrationFormProps) {
     const [clientData, setClientData] = useState(initialValueClient);
-    console.log(clientData);
+    const [roleData, setRoleData] = useState(initialValueRole);
 
-    const handleClientChange = (event: React.ChangeEvent) => {
+    useEffect(() => {
+        api.get("/select", {
+            params: {
+                table: "filial",
+            },
+        }).then((response) => console.log(response));
+    }, []);
+
+    const handleFormChange = (
+        event: React.ChangeEvent | SelectChangeEvent,
+        state: any,
+        setter: any
+    ) => {
         const { name, value } = event.target as HTMLInputElement;
-        setClientData({ ...clientData, [name]: value });
+        setter({ ...state, [name]: value });
     };
 
-    function postClient(
+    function createClient(
         table: string,
         nome: string,
         email: string,
         cpf: string,
         telefone: string
     ) {
-        api.post("/insert", null, { params: {
-            table,
-            nome,
-            email,
-            cpf,
-            telefone
-          }})
-            .then((response) => console.log("Post enviado com sucesso!"))
+        api.post("/insert", null, {
+            params: {
+                table,
+                nome,
+                email,
+                cpf,
+                telefone,
+            },
+        })
+            .then((response) => {
+                alert(response.data.message);
+                setClientData(initialValueClient);
+            })
+            .catch((error) => console.log(error));
+    }
+
+    function createRole(
+        salary: string,
+        description: string,
+        permission: string
+    ) {
+        api.post("/insert", null, {
+            params: {
+                table: "cargo",
+                salario: salary,
+                descricao: description,
+                permissao_venda: permission,
+            },
+        })
+            .then((response) => {
+                alert(response.data.message);
+                setRoleData(initialValueRole);
+            })
             .catch((error) => console.log(error));
     }
 
@@ -62,7 +107,9 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 label="Nome"
                 name="name"
                 value={clientData.name}
-                onChange={handleClientChange}
+                onChange={(event) =>
+                    handleFormChange(event, clientData, setClientData)
+                }
                 required
             />
 
@@ -70,12 +117,16 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 label="CPF"
                 name="cpf"
                 value={clientData.cpf}
-                onChange={handleClientChange}
+                onChange={(event) =>
+                    handleFormChange(event, clientData, setClientData)
+                }
                 required
             />
             <TextField
                 value={clientData.email}
-                onChange={handleClientChange}
+                onChange={(event) =>
+                    handleFormChange(event, clientData, setClientData)
+                }
                 label="Email"
                 name="email"
                 required
@@ -84,12 +135,15 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 label="Telefone"
                 name="phone"
                 value={clientData.phone}
-                onChange={handleClientChange}
+                onChange={(event) =>
+                    handleFormChange(event, clientData, setClientData)
+                }
                 required
             />
             <Button
+                variant="contained"
                 onClick={() =>
-                    postClient(
+                    createClient(
                         "cliente",
                         clientData.name,
                         clientData.email,
@@ -98,7 +152,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                     )
                 }
             >
-                Cliente Button
+                Registrar Cliente
             </Button>
         </div>
     );
@@ -113,16 +167,54 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
         </FormControl>
     );
 
-    const RoleForm = () => (
+    const roleForm = () => (
         <div className={styles.form}>
-            <TextField label="Salário" required />
-            <TextField label="Descrição do cargo" multiline rows={2} required />
+            <TextField
+                label="Salário"
+                name="salary"
+                value={roleData.salary}
+                onChange={(event) =>
+                    handleFormChange(event, roleData, setRoleData)
+                }
+                required
+            />
+            <TextField
+                label="Descrição do cargo"
+                name="description"
+                value={roleData.description}
+                onChange={(event) =>
+                    handleFormChange(event, roleData, setRoleData)
+                }
+                multiline
+                rows={2}
+                required
+            />
             <FormControl variant="standard" sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="permission-label">Permissões</InputLabel>
-                <Select labelId="permission-label">
+                <Select
+                    labelId="permission-label"
+                    name="permission"
+                    value={roleData.permission}
+                    onChange={(event) =>
+                        handleFormChange(event, roleData, setRoleData)
+                    }
+                >
                     <MenuItem value="true">Pode vender</MenuItem>
                     <MenuItem value="false">Não pode vender</MenuItem>
                 </Select>
+                <br />
+                <Button
+                    variant="contained"
+                    onClick={() =>
+                        createRole(
+                            roleData.salary,
+                            roleData.description,
+                            roleData.permission
+                        )
+                    }
+                >
+                    Registrar cargo
+                </Button>
             </FormControl>
         </div>
     );
@@ -190,7 +282,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
             case "employee":
                 return <EmployeeForm />;
             case "role":
-                return <RoleForm />;
+                return roleForm();
             case "product":
                 return <ProductForm />;
             case "maker":
