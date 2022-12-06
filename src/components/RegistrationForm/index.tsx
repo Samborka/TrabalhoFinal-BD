@@ -40,18 +40,18 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
 
     function postClient(
         table: string,
-        name: string,
+        nome: string,
         email: string,
         cpf: string,
-        phone: string
+        telefone: string
     ) {
-        api.post("/insert", {
-            table: table,
-            name: name,
-            email: email,
-            cpf: cpf,
-            phone: phone,
-        })
+        api.post("/insert", null, { params: {
+            table,
+            nome,
+            email,
+            cpf,
+            telefone
+          }})
             .then((response) => console.log("Post enviado com sucesso!"))
             .catch((error) => console.log(error));
     }
