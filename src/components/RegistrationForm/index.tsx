@@ -1,4 +1,15 @@
 import React, { useEffect, useState } from "react";
+import {
+    initialValueClient,
+    initialValueRole,
+    initialValueEmployee,
+    initialValueProduct,
+    initialValueMaker,
+    initialValueBranch,
+    initialValueNote,
+    initialValueProductCategory,
+    initialValuePaymentMethod,
+} from "./initialValues";
 
 import {
     TextField,
@@ -16,33 +27,6 @@ import styles from "./styles.module.scss";
 interface RegistrationFormProps {
     selected: string;
 }
-
-type Client = {
-    name: string;
-    email: string;
-    cpf: string;
-    phone: string;
-};
-
-const initialValueClient = {
-    name: "",
-    email: "",
-    cpf: "",
-    phone: "",
-};
-
-const initialValueRole = {
-    salary: "",
-    description: "",
-    permission: "",
-};
-
-const initialValueEmployee = {
-    name: "",
-    cpf: "",
-    cod_filial: "",
-    cod_cargo: "",
-};
 
 function RegistratioForm({ selected }: RegistrationFormProps) {
     const [clientData, setClientData] = useState(initialValueClient);
@@ -82,7 +66,6 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
     };
 
     function createClient(
-        table: string,
         nome: string,
         email: string,
         cpf: string,
@@ -90,7 +73,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
     ) {
         api.post("/insert", null, {
             params: {
-                table,
+                table: "cliente",
                 nome,
                 email,
                 cpf,
@@ -189,7 +172,6 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 variant="contained"
                 onClick={() =>
                     createClient(
-                        "cliente",
                         clientData.name,
                         clientData.email,
                         clientData.cpf,
@@ -334,7 +316,6 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 required
             />
             <TextField label="Valor" required />
-            <TextField label="Quantidade no estoque" type={"number"} required />
             //Implementar chaves estrangeiras
             <span>chave estrangeira</span>
             <span>chave estrangeira</span>
