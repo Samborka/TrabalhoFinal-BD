@@ -251,7 +251,7 @@ function RegistratioForm({ selected }: RegistrationFormProps) {
                 <Select
                     labelId="cod-role-label"
                     name="cod_cargo"
-                    value={employeeData.cod_filial}
+                    value={employeeData.cod_cargo}
                     onChange={(event) =>
                         handleFormChange(event, employeeData, setEmployeeData)
                     }
