@@ -40,7 +40,10 @@ export const initialValueBranch = {
 
 export const initialValueNote = {
     num_parcelas: "",
-    cod_filial: "",
+    produto: {
+        cod_produto: [""],
+        quantidade: [],
+    },
     cod_metodo: "",
     cod_funcionario: "",
     cod_cliente: "",

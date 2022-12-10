@@ -14,7 +14,7 @@ import {
 
 import styles from "./styles.module.scss";
 
-function Home() {
+function Cadastro() {
     const [select, setSelect] = useState("");
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -58,4 +58,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Cadastro;

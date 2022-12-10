@@ -1,11 +1,12 @@
-import styles from './styles.module.scss'
+import styles from "./styles.module.scss";
 
-function Navbar(){
-    return(
+function Navbar() {
+    return (
         <nav className={styles.nav}>
-            <a href="">Home</a>
+            <a href="/TrabalhoFinal-BD/">Cadastro</a>
+            <a href="/TrabalhoFinal-BD/tabelas">Tabelas</a>
         </nav>
-    )
+    );
 }
 
-export default Navbar
+export default Navbar;
